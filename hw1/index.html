@@ -1,7 +1,72 @@
+﻿<!DOCTYPE html>
 <html>
-	<head>
-	</head>
-	<body>
-		Homework 1 index.html here
-	</body>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome file</title>
+  <link rel="stylesheet" href="https://stackedit.io/style.css" />
+</head>
+
+<body class="stackedit">
+  <div class="stackedit__html"><h1 id="assignment-1-write-up">Assignment 1 Write-up</h1>
+<p>Name: Ge Jin<br>
+Student ID: 3037754475</p>
+<h1 id="rasterizer">Rasterizer</h1>
+<h2 id="task-1">Task 1</h2>
+<p>To rasterize triangles, we perform point-in-triangle tests for every pixel center within the triangle’s bounding box. This bounding box is determined as follows:</p>
+<p>int min_x = (int) floor(min({x0, x1, x2}));</p>
+<p>int max_x = (int) ceil(max({x0, x1, x2}));</p>
+<p>int min_y = (int) floor(min({y0, y1, y2}));</p>
+<p>int max_y = (int) ceil(max({y0, y1, y2}));</p>
+<p>Specifically, since the triangle has three edges, we can calculate the line equation for each edge. Then, we insert the pixel’s coordinates into these line equations. If the vertices of the triangle are arranged in a counter-clockwise order, we require all the line equation outputs to be greater than or equal to 0, indicating that the pixel is within the boundary of the triangle. If the cross product of any two edges of the triangle yields a negative value, it suggests that the vertices are ordered clockwise, and thus, we would require all the line equation outputs to be less than or equal to 0.</p>
+<p>This algorithm is efficient because it eliminates the need to check each sample within the entire bounding box of the triangle, only focusing on those areas where the triangle actually occupies space. This method is no worse than one that checks every sample within the bounding box.</p>
+<p><img src="https://i.ibb.co/7nLSCRX/image-5.png" alt="basic/test4.svg"><br>
+Above: <em>basic/test4.svg</em></p>
+<h2 id="task-2">Task 2</h2>
+<p>Our supersampling algorithm is designed to antialias by increasing the sampling buffer with an upsampling rate. We then draw our triangle into this new buffer, which has a much higher sampling rate than our screen resolution. Afterward, we average the pixel color values from (x - sample_rate_sqrt, y - sample_rate_sqrt) to (x + sample_rate_sqrt, y + sample_rate_sqrt).</p>
+<p>Aliasing occurs when the sample rate is less than the frequency of the signal. By applying the box filter, we can filter out high-frequency noise and achieve better image quality.</p>
+<p>The sample rate of 4 results in more blurry edges for the yellow triangle, indicating a decrease in the frequency of the signal compared to the sample rate of 1. For the sample rate of 16, the edges of the yellow triangle become even blurrier, but the red triangle exhibits improved image quality. This presents a trade-off between antialiasing and the issue of blurry image quality, which is why we might need multiple levels of supersampling rates for different areas.</p>
+<p><img src="https://i.ibb.co/7nLSCRX/image-5.png" alt="basic/test4.svg"><br>
+Above: basic/test4.svg (Sample Rate 1)</p>
+<p><img src="https://i.ibb.co/9yDCSdp/2-2.png" alt="enter image description here"></p>
+<p>Above: basic/test4.svg (Sample Rate 4)</p>
+<p><img src="https://i.ibb.co/gwjTcg6/2-3.png" alt="enter image description here"></p>
+<p>Above: basic/test4.svg (Sample Rate 16)</p>
+<h2 id="task-3">Task 3</h2>
+<p>After the modification, the cubeman seems to engage in a sport, like tennis. The position of the arms can be imaged as a tennis player ready a swing a racket (maybe a forehand stroke). To make the cubeman wave, I rotate one of the arm element around the point near the shoulder. In addition, to suggest the leg’s movemenet, I also rotate the cubman’s leg.</p>
+<p><img src="https://i.ibb.co/N6cZ5rC/test.png" alt="enter image description here"><br>
+Above: <em>my_robot.svg</em></p>
+<h2 id="task-4">Task 4</h2>
+<p>Barycentric coordinates are a method to express positions within a triangle. When mapping from texture space to pixels in a triangle (in screen space), it’s important to accurately convert triangle coordinates into actual texture space. In the provided image, the vertices are colored black, red, and green. The barycentric coordinates—alpha, beta, and gamma (which sum to one)—serve as weights for the vertices. By mixing colors according to these weights, we achieve a relatively smooth transition of color (or other attributes, such as location in texture space) across the triangle’s surface.</p>
+<p>By leveraging barycentric coordinates to blend colors, we can facilitate a smooth transition of color (or other attributes, for example, location in texture space) across the triangle’s surface.</p>
+<p><img src="https://i.ibb.co/xHHFx5q/4-1.png" alt="enter image description here"><br>
+Above: example of bilinear sampling</p>
+<p><img src="https://i.ibb.co/bR2YVwT/4-2.png" alt="enter image description here"></p>
+<p>Above: <em>svg/basic/test7.svg</em></p>
+<h2 id="task-5">Task 5</h2>
+<p>Pixel sampling involves calculating the barycentric coordinates for each pixel within a triangle in screen space. For instance, consider a triangle composed of vertices (x0, y0), (x1, y1), and (x2, y2), each with corresponding UV coordinates in the texture space. By utilizing the barycentric coordinates, we can determine the UV index for each pixel. This leads to two distinct pixel sampling methods: nearest and bilinear. The nearest method searches for the closest pixel to the given UV coordinate. On the other hand, bilinear interpolation calculates the value from the surrounding pixels (u, v), (u+1, v), (u, v+1), and (u+1, v+1), ensuring a smoother color transition.</p>
+<p>We observe that both the bilinear and nearest sampling methods achieve very high image quality with 16 samples per pixel. This is partly because our super-sampling algorithm averages the pixel color values, resulting in smooth transitions. Nonetheless, with 1 sample per pixel, bilinear sampling clearly outperforms the nearest method. The edges appear much sharper with bilinear sampling because it interpolates the value, leading to better transitions.</p>
+<p><img src="https://i.ibb.co/VwPjwJc/5-1.png" alt="enter image description here"></p>
+<p>Above: nearest sampling at 1 sample per pixel</p>
+<p><img src="https://i.ibb.co/WWhFKh6/5-2.png" alt="enter image description here"></p>
+<p>Above: nearest sampling at 16 samples per pixel</p>
+<p><img src="https://i.ibb.co/kcx1R5V/5-3.png" alt="enter image description here"></p>
+<p>Above: bilinear sampling at 1 sample per pixel</p>
+<p><img src="https://i.ibb.co/7QwTVCs/5-4.png" alt="enter image description here"></p>
+<p>Above: bilinear sampling at 16 sample per pixel</p>
+<h2 id="task-6">Task 6</h2>
+<p>Since mapping texture space into screen space can vary significantly—for instance, objects farther away may appear smaller on the screen, meaning the sampling rate in the texture space is higher than in screen space—we don’t actually need as much detail. Although supersampling can enhance quality, it leads to performance issues due to the necessity for a full supersampling buffer, which is not an efficient strategy from a memory cost perspective. To balance performance and rendering quality, we use mipmapping. This involves creating a series of progressively smaller versions of the original texture (usually reduced to half of the original resolution for each layer, with the highest resolution layer being 0). Mipmapping is optimal when considering the tradeoff between speed, quality, and memory usage.</p>
+<p>The key selection criterion is calculating the mipmap level. To retrieve the value, we calculate (du/dx, dv/dx) and (du/dy, dv/dy), take the maximum, and then use log2 to find the appropriate value. We can also use linear interpolation to further refine the value. By calculating the weighted sum of two relevant layers, we can achieve smooth image quality.</p>
+<p><img src="https://i.ibb.co/pxGpBLb/6-1.png" alt="enter image description here"></p>
+<p>Above: L_ZERO and P_NEAREST</p>
+<p><img src="https://i.ibb.co/bR5FRhC/6-2.png" alt="enter image description here"></p>
+<p>Above: L_ZERO and P_LINEAR</p>
+<p><img src="https://i.ibb.co/YQ889RY/6-3.png" alt="enter image description here"></p>
+<p>Above: L_NEAREST and P_NEAREST</p>
+<p><img src="https://i.ibb.co/k5DJvsV/6-4.png" alt="enter image description here"></p>
+<p>Above: L_NEAREST and P_LINEAR</p>
+</div>
+</body>
+
 </html>
